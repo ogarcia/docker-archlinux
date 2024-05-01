@@ -1,6 +1,6 @@
 # Container images for Arch Linux [![Build and Push](https://github.com/ogarcia/docker-archlinux/actions/workflows/build.yaml/badge.svg)](https://github.com/ogarcia/docker-archlinux/actions/workflows/build.yaml)
 
-(c) 2017-2023 Óscar García Amor
+(c) 2017-2024 Óscar García Amor
 
 This repository contains all the scripts and files needed to create various
 container image flavors of the Arch Linux distribution.
