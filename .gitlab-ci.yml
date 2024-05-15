@@ -1,0 +1,33 @@
+variables:
+  DOCKERHUB_REGISTRY_IMAGE: "docker.io/ogarcia/archlinux"
+  QUAY_REGISTRY_IMAGE: "quay.io/ogarcia/archlinux"
+
+stages:
+  - Container
+
+Build and push container image:
+  stage: Container
+  image: docker
+  services:
+    - docker:dind
+  script:
+    - DATE="$(date +'%Y.%m.%d')"
+    - |
+      for REGISTRY_IMAGE in "${CI_REGISTRY_IMAGE}" "${DOCKERHUB_REGISTRY_IMAGE}" "${QUAY_REGISTRY_IMAGE}"; do
+        TAGS="${TAGS} --tag ${REGISTRY_IMAGE}:${DATE}-${TAG} --tag ${REGISTRY_IMAGE}:${TAG}"
+        if [[ "${TAG}" == "base" ]]; then
+          TAGS="${TAGS} --tag ${REGISTRY_IMAGE}:latest"
+        fi
+      done
+    - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
+    - docker login -u ${QUAY_USERNAME} -p ${QUAY_PASSWORD} quay.io
+    - docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_TOKEN}
+    - docker context create builder
+    - docker buildx create builder --use
+    - docker buildx build --push --platform linux/amd64,linux/arm/v7,linux/arm64,linux/riscv64 --build-arg PACKAGE_GROUP="${PACKAGE_GROUP}" ${TAGS} .
+  parallel:
+    matrix:
+      - TAG: base
+        PACKAGE_GROUP: base
+      - TAG: devel
+        PACKAGE_GROUP: base base-devel
