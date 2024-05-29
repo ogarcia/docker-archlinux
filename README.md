@@ -22,11 +22,11 @@ At this moment, two images of Arch Linux are building.
 
 Tag format used is as following.
 
-- **base**: `YYYY.MM.DD`, `YYYY.MM.DD-base`, `base`, `latest`
+- **base**: `YYYY.MM.DD-base`, `base`, `latest`
 - **devel**: `YYYY.MM.DD-devel`, `devel`
 
-Old images are archived with format `YYYY.MM.DD` and `YYYY.MM.DD-base` for
-base and `YYYY.MM.DD-devel` for devel.
+Old images are archived with format `YYYY.MM.DD-base` for base and
+`YYYY.MM.DD-devel` for devel.
 
 Visit [GitLab][gl], [Quay][quay] or [Docker Hub][dh] to see all available
 tags.
