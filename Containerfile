@@ -1,10 +1,10 @@
-FROM docker.io/alpine:3.20.2 AS bootstrapper
+FROM docker.io/alpine:3.20 AS bootstrapper
 ARG TARGETARCH
 ARG PACKAGE_GROUP=base
 COPY files /files
 RUN \
   apk add arch-install-scripts pacman-makepkg curl && \
-  cat /files/repos-$TARGETARCH >> /etc/pacman.conf && \
+  (echo; cat /files/repos-$TARGETARCH; echo; cat /files/noextract) >> /etc/pacman.conf && \
   mkdir -p /etc/pacman.d && \
   cp /files/mirrorlist-$TARGETARCH /etc/pacman.d/mirrorlist && \
   BOOTSTRAP_EXTRA_PACKAGES="" && \
@@ -28,6 +28,7 @@ RUN \
   pacman-key --populate && \
   mkdir /rootfs && \
   /files/pacstrap-docker /rootfs $PACKAGE_GROUP $BOOTSTRAP_EXTRA_PACKAGES && \
+  cp /etc/pacman.conf /rootfs/etc/pacman.conf && \
   cp /etc/pacman.d/mirrorlist /rootfs/etc/pacman.d/mirrorlist && \
   echo "en_US.UTF-8 UTF-8" > /rootfs/etc/locale.gen && \
   echo "LANG=en_US.UTF-8" > /rootfs/etc/locale.conf && \
