@@ -1,4 +1,4 @@
-FROM docker.io/alpine:3.20 AS bootstrapper
+FROM docker.io/alpine:3.21 AS bootstrapper
 ARG TARGETARCH
 ARG PACKAGE_GROUP=base
 COPY files /files
