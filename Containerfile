@@ -6,7 +6,11 @@ RUN \
   apk add arch-install-scripts pacman-makepkg curl && \
   (echo; cat /files/repos-$TARGETARCH; echo; cat /files/noextract) >> /etc/pacman.conf && \
   mkdir -p /etc/pacman.d && \
-  cp /files/mirrorlist-$TARGETARCH /etc/pacman.d/mirrorlist && \
+  . /files/mirrorlist-$TARGETARCH.env && \
+  curl -L "$MIRRORLIST_URL" | sed -E 's/^\s*#\s*Server\s*=/Server =/g' > /etc/pacman.d/mirrorlist && \
+  if [ -n "$MIRRORLIST_ARCH" ]; then \
+    sed -i 's/\$arch/'$MIRRORLIST_ARCH'/g' /etc/pacman.d/mirrorlist; \
+  fi && \
   BOOTSTRAP_EXTRA_PACKAGES="" && \
   if [[ "$TARGETARCH" == "arm*" ]]; then \
     EXTRA_KEYRING_FILES=" \
