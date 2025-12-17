@@ -1,10 +1,10 @@
-FROM docker.io/alpine:3.21 AS bootstrapper
+FROM docker.io/alpine:3.23 AS bootstrapper
 ARG TARGETARCH
 ARG PACKAGE_GROUP=base
 COPY files /files
 RUN \
   apk add arch-install-scripts pacman-makepkg curl && \
-  (echo; cat /files/repos-$TARGETARCH; echo; cat /files/noextract) >> /etc/pacman.conf && \
+  (echo; echo "SigLevel = Required DatabaseOptional"; echo; cat /files/repos-$TARGETARCH; echo; cat /files/noextract) >> /etc/pacman.conf && \
   mkdir -p /etc/pacman.d && \
   . /files/mirrorlist-$TARGETARCH.env && \
   curl -L "$MIRRORLIST_URL" | sed -E 's/^\s*#\s*Server\s*=/Server =/g' > /etc/pacman.d/mirrorlist && \
