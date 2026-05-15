@@ -7,7 +7,7 @@ RUN \
   (echo; echo "SigLevel = Required DatabaseOptional"; echo; cat /files/repos-$TARGETARCH; echo; cat /files/noextract) >> /etc/pacman.conf && \
   mkdir -p /etc/pacman.d && \
   . /files/mirrorlist-$TARGETARCH.env && \
-  curl -L "$MIRRORLIST_URL" | sed -E 's/^\s*#\s*Server\s*=/Server =/g' > /etc/pacman.d/mirrorlist && \
+  curl -L -f --retry 5 --retry-delay 5 "$MIRRORLIST_URL" | sed -E 's/^\s*#\s*Server\s*=/Server =/g' > /etc/pacman.d/mirrorlist && \
   if [ -n "$MIRRORLIST_ARCH" ]; then \
     sed -i 's/\$arch/'$MIRRORLIST_ARCH'/g' /etc/pacman.d/mirrorlist; \
   fi && \
@@ -21,13 +21,13 @@ RUN \
     EXTRA_KEYRING_URL="https://raw.githubusercontent.com/archlinuxarm/PKGBUILDs/master/core/archlinuxarm-keyring/" && \
     mkdir /usr/share/pacman/keyrings && \
     for EXTRA_KEYRING_FILE in $EXTRA_KEYRING_FILES; do \
-      curl "$EXTRA_KEYRING_URL$EXTRA_KEYRING_FILE" -o /usr/share/pacman/keyrings/$EXTRA_KEYRING_FILE -L; \
+      curl -f --retry 5 --retry-delay 5 "$EXTRA_KEYRING_URL$EXTRA_KEYRING_FILE" -o /usr/share/pacman/keyrings/$EXTRA_KEYRING_FILE -L; \
     done && \
     BOOTSTRAP_EXTRA_PACKAGES="archlinuxarm-keyring"; \
   else \
     apk add zstd && \
     mkdir /tmp/archlinux-keyring && \
-    curl -L https://archlinux.org/packages/core/any/archlinux-keyring/download | unzstd | tar -C /tmp/archlinux-keyring -xv && \
+    curl -L -f --retry 5 --retry-delay 5 https://archlinux.org/packages/core/any/archlinux-keyring/download | unzstd | tar -C /tmp/archlinux-keyring -xv && \
     mv /tmp/archlinux-keyring/usr/share/pacman/keyrings /usr/share/pacman/; \
   fi && \
   pacman-key --init && \
