@@ -1,6 +1,7 @@
 variables:
   DOCKERHUB_REGISTRY_IMAGE: "docker.io/ogarcia/archlinux"
   QUAY_REGISTRY_IMAGE: "quay.io/ogarcia/archlinux"
+  BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
 
 stages:
   - Container
